@@ -1,0 +1,5 @@
+../Core/Display/st7789.c:68:16:ST7789_MemoryDataAccessControlConfig	24	static
+../Core/Display/st7789.c:80:10:ST7789_Init	32	static
+../Core/Display/st7789.c:91:10:ST7789_SetWindow	16	static
+../Core/Display/st7789.c:100:10:ST7789_SleepIn	4	static
+../Core/Display/st7789.c:105:10:ST7789_SleepOut	4	static
