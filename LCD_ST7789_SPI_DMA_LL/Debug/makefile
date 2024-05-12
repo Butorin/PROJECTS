@@ -67,8 +67,8 @@ all: main-build
 main-build: LCD_ST7789_SPI_DMA_LL.elf secondary-outputs
 
 # Tool invocations
-LCD_ST7789_SPI_DMA_LL.elf LCD_ST7789_SPI_DMA_LL.map: $(OBJS) $(USER_OBJS) D:\STM32\LCD_ST7789_SPI_DMA_LL\STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "LCD_ST7789_SPI_DMA_LL.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\STM32\LCD_ST7789_SPI_DMA_LL\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="LCD_ST7789_SPI_DMA_LL.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+LCD_ST7789_SPI_DMA_LL.elf LCD_ST7789_SPI_DMA_LL.map: $(OBJS) $(USER_OBJS) D:\STM32\PROJECTS\PROJECTS\LCD_ST7789_SPI_DMA_LL\STM32F429ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "LCD_ST7789_SPI_DMA_LL.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"D:\STM32\PROJECTS\PROJECTS\LCD_ST7789_SPI_DMA_LL\STM32F429ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="LCD_ST7789_SPI_DMA_LL.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

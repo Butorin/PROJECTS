@@ -2,7 +2,9 @@
 /**
   ******************************************************************************
   * @file           : main.c
-  * @brief          : Main program body
+  * @brief          : Тестовая программа для тестирования подключения к дисплею ST7789 240x240
+  * по шине SPI без использования HAL
+  * Автор
   ******************************************************************************
   * @attention
   *
@@ -23,6 +25,8 @@
 /* USER CODE BEGIN Includes */
 #include "display.h"
 #include "st7789.h"
+#include "ili9341.h"
+#include <stdlib.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,6 +48,7 @@
 I2C_HandleTypeDef hi2c3;
 
 /* USER CODE BEGIN PV */
+volatile uint32_t millis = 0;
 
 /* USER CODE END PV */
 
@@ -61,28 +66,8 @@ static void MX_TIM3_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-LCD_Handler *lcd;
-LCD_Handler* LCD_DisplayAdd(LCD_Handler *lcds,			/* указатель на первый дисплей в списке либо 0,
-														   если в списке еще нет дисплеев */
-#ifndef LCD_DYNAMIC_MEM
-							LCD_Handler *lcd,	        /* указатель на создаваемый обработчик дисплея
-							 	 	 	 	 	 	 	   в случае статического выделения памяти */
-#endif
-							uint16_t resolution1,
-							uint16_t resolution2,
-							uint16_t width_controller,
-							uint16_t height_controller,
-							int16_t w_offs,
-							int16_t h_offs,
-							LCD_PageOrientation orientation,
-							DisplayInitCallback init,
-							DisplaySetWindowCallback set_win,
-							DisplaySleepInCallback sleep_in,
-							DisplaySleepOutCallback sleep_out,
-							void *connection_data,
-							LCD_DATA_BUS data_bus,
-							LCD_BackLight_data bkl_data
-					   );
+
+
 /* USER CODE END 0 */
 
 /**
@@ -93,6 +78,18 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+	/* включаем кэширование инструкций */
+	#if (INSTRUCTION_CACHE_ENABLE != 0U)
+		((FLASH_TypeDef *) ((0x40000000UL + 0x00020000UL) + 0x3C00UL))->ACR |= (0x1UL << (9U));
+	#endif
+	/* включаем кэширование данных */
+	#if (DATA_CACHE_ENABLE != 0U)
+		((FLASH_TypeDef *) ((0x40000000UL + 0x00020000UL) + 0x3C00UL))->ACR |= (0x1UL << (10U));
+	#endif
+	/* включаем систему предварительной выборки инструкций*/
+	#if (PREFETCH_ENABLE != 0U)
+		((FLASH_TypeDef *) ((0x40000000UL + 0x00020000UL) + 0x3C00UL))->ACR |= (0x1UL << (8U));
+	#endif
 
   /* USER CODE END 1 */
 
@@ -109,6 +106,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
+  SysTick_Config(SystemCoreClock/1000);
 
   /* USER CODE END SysInit */
 
@@ -120,7 +118,79 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+  LCD_DMA_TypeDef        dma_tx  = { DMA1,
+  		                             LL_DMA_STREAM_5
+  };
 
+  LCD_BackLight_data     bkl_data= { TIM3,                // Яркость дисплея
+  		                             LL_TIM_CHANNEL_CH1,
+  								     0,
+  								     0,
+  								     50
+  };
+
+  LCD_SPI_Connected_data spi_con = { SPI3,                // SPI соединение
+  		                             dma_tx,              // DMA
+  								     LCD_RES_GPIO_Port,
+  								     LCD_RES_Pin,
+  								     LCD_DC_GPIO_Port,
+  								     LCD_DC_Pin,
+  								     LCD_CS_GPIO_Port,
+  								     LCD_CS_Pin
+  };
+
+  #ifndef LCD_DYNAMIC_MEM
+    LCD_Handler lcd1;
+  #endif
+    /*  Для дисплея на контроллере ST7789   */
+  LCD = LCD_DisplayAdd(       LCD,
+  #ifndef LCD_DYNAMIC_MEM
+    		  	  	  	  	    &lcd1,
+  #endif
+  							240,
+  							240,
+  							ST7789_CONTROLLER_WIDTH,
+  							ST7789_CONTROLLER_HEIGHT,
+  							0,
+  							0,
+  							PAGE_ORIENTATION_PORTRAIT_MIRROR,
+  							ST7789_Init,
+  							ST7789_SetWindow,
+  							ST7789_SleepIn,
+  							ST7789_SleepOut,
+  							&spi_con,
+  							LCD_DATA_16BIT_BUS,
+  							bkl_data
+  );
+  /*  Для дисплея на контроллере ILI9341   */
+/*
+  LCD = LCD_DisplayAdd( LCD,
+#ifndef LCD_DYNAMIC_MEM
+		  	  	  	  	&lcd1,
+#endif
+		  	  	  	  	320,
+		   				240,
+						ILI9341_CONTROLLER_WIDTH,
+						ILI9341_CONTROLLER_HEIGHT,
+						//Задаем смещение по ширине и высоте для нестандартных или бракованных дисплеев:
+						0,		//смещение по ширине дисплейной матрицы
+						0,		//смещение по высоте дисплейной матрицы
+						//PAGE_ORIENTATION_PORTRAIT_MIRROR,
+						PAGE_ORIENTATION_LANDSCAPE,
+						ILI9341_Init,
+						ILI9341_SetWindow,
+						ILI9341_SleepIn,
+						ILI9341_SleepOut,
+						&spi_con,
+						LCD_DATA_16BIT_BUS,
+						bkl_data );
+*/
+
+  LCD_Handler *lcd = LCD; //указатель на первый дисплей в списке
+  LCD_Init(lcd);
+  LCD_Fill(lcd, COLOR_RED);
+  LCD_WriteString(lcd, 0, 0, "Hello, world!", &Font_15x25, COLOR_YELLOW, COLOR_BLUE, LCD_SYMBOL_PRINT_FAST);
+  LL_mDelay(2000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -262,7 +332,7 @@ static void MX_SPI3_Init(void)
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   GPIO_InitStruct.Alternate = LL_GPIO_AF_6;
   LL_GPIO_Init(LCD_SDA_GPIO_Port, &GPIO_InitStruct);
 
@@ -270,7 +340,7 @@ static void MX_SPI3_Init(void)
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ALTERNATE;
   GPIO_InitStruct.Speed = LL_GPIO_SPEED_FREQ_VERY_HIGH;
   GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-  GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
+  GPIO_InitStruct.Pull = LL_GPIO_PULL_UP;
   GPIO_InitStruct.Alternate = LL_GPIO_AF_6;
   LL_GPIO_Init(LCD_SCL_GPIO_Port, &GPIO_InitStruct);
 
@@ -378,7 +448,7 @@ static void MX_TIM3_Init(void)
   /* USER CODE END TIM3_Init 1 */
   TIM_InitStruct.Prescaler = 999;
   TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-  TIM_InitStruct.Autoreload = 209;
+  TIM_InitStruct.Autoreload = 179;
   TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
   LL_TIM_Init(TIM3, &TIM_InitStruct);
   LL_TIM_DisableARRPreload(TIM3);
@@ -386,7 +456,7 @@ static void MX_TIM3_Init(void)
   TIM_OC_InitStruct.OCMode = LL_TIM_OCMODE_PWM1;
   TIM_OC_InitStruct.OCState = LL_TIM_OCSTATE_DISABLE;
   TIM_OC_InitStruct.OCNState = LL_TIM_OCSTATE_DISABLE;
-  TIM_OC_InitStruct.CompareValue = 104;
+  TIM_OC_InitStruct.CompareValue = 89;
   TIM_OC_InitStruct.OCPolarity = LL_TIM_OCPOLARITY_HIGH;
   LL_TIM_OC_Init(TIM3, LL_TIM_CHANNEL_CH1, &TIM_OC_InitStruct);
   LL_TIM_OC_DisableFast(TIM3, LL_TIM_CHANNEL_CH1);

@@ -39,9 +39,10 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_spi.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_gpio.h \
- D:/STM32/LCD_ST7789_SPI_DMA_LL/Core/Display/display.h \
- D:/STM32/LCD_ST7789_SPI_DMA_LL/Core/Display/fonts.h \
- D:/STM32/LCD_ST7789_SPI_DMA_LL/Core/Display/st7789.h
+ D:/STM32/PROJECTS/PROJECTS/LCD_ST7789_SPI_DMA_LL/Core/Display/display.h \
+ D:/STM32/PROJECTS/PROJECTS/LCD_ST7789_SPI_DMA_LL/Core/Display/fonts.h \
+ D:/STM32/PROJECTS/PROJECTS/LCD_ST7789_SPI_DMA_LL/Core/Display/st7789.h \
+ D:/STM32/PROJECTS/PROJECTS/LCD_ST7789_SPI_DMA_LL/Core/Display/ili9341.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -83,6 +84,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_spi.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_gpio.h:
-D:/STM32/LCD_ST7789_SPI_DMA_LL/Core/Display/display.h:
-D:/STM32/LCD_ST7789_SPI_DMA_LL/Core/Display/fonts.h:
-D:/STM32/LCD_ST7789_SPI_DMA_LL/Core/Display/st7789.h:
+D:/STM32/PROJECTS/PROJECTS/LCD_ST7789_SPI_DMA_LL/Core/Display/display.h:
+D:/STM32/PROJECTS/PROJECTS/LCD_ST7789_SPI_DMA_LL/Core/Display/fonts.h:
+D:/STM32/PROJECTS/PROJECTS/LCD_ST7789_SPI_DMA_LL/Core/Display/st7789.h:
+D:/STM32/PROJECTS/PROJECTS/LCD_ST7789_SPI_DMA_LL/Core/Display/ili9341.h:

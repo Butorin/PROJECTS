@@ -22,6 +22,7 @@
 #include "stm32f4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "display.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,6 +42,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
+extern uint32_t millis;
 
 /* USER CODE END PV */
 
@@ -184,7 +186,7 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-
+	millis++;
   /* USER CODE END SysTick_IRQn 0 */
 
   /* USER CODE BEGIN SysTick_IRQn 1 */
@@ -205,7 +207,7 @@ void SysTick_Handler(void)
 void DMA1_Stream5_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Stream5_IRQn 0 */
-
+	Display_TC_Callback(DMA1, LL_DMA_STREAM_5);
   /* USER CODE END DMA1_Stream5_IRQn 0 */
 
   /* USER CODE BEGIN DMA1_Stream5_IRQn 1 */
