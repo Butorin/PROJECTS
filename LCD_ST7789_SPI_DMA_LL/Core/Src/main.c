@@ -153,7 +153,7 @@ int main(void)
   							ST7789_CONTROLLER_HEIGHT,
   							0,
   							0,
-  							PAGE_ORIENTATION_PORTRAIT_MIRROR,
+  							PAGE_ORIENTATION_PORTRAIT,
   							ST7789_Init,
   							ST7789_SetWindow,
   							ST7789_SleepIn,
@@ -189,12 +189,41 @@ int main(void)
   LCD_Handler *lcd = LCD; //указатель на первый дисплей в списке
   LCD_Init(lcd);
   LCD_Fill(lcd, COLOR_RED);
-  LCD_WriteString(lcd, 0, 0, "Hello, world!", &Font_15x25, COLOR_YELLOW, COLOR_BLUE, LCD_SYMBOL_PRINT_FAST);
+  LCD_WriteString(lcd, 0, 0, "VIKTORIA", &Font_15x25, COLOR_YELLOW, COLOR_BLUE, LCD_SYMBOL_PRINT_FAST);
   LL_mDelay(2000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint32_t tick;
+  uint32_t frames;
+  char buff[10];
+  uint8_t r = 0, g = 0, b = 0;
+  while (1)
+  {
+  	  frames = 0;
+  	  tick = millis;
+  	  while (millis - tick < 1000)
+  	  {
+  		  LCD_Fill(lcd, (r << 16) | (g << 8) | b);
+
+  		  r++;
+  		  g += 2;
+  		  b += 4;
+
+  		  /* задержка */
+  		  /*
+  		  for (uint32_t i = 0; i<100000; i++)
+		  {
+			  __NOP();
+		  }
+  		  */
+  		  frames++;
+  	  }
+  	  utoa(frames, buff, 10);
+  	  LCD_WriteString(lcd, 0, 0, buff, &Font_15x25, COLOR_YELLOW, COLOR_BLUE, LCD_SYMBOL_PRINT_FAST);
+  	  LL_mDelay(1000);
+  }
   while (1)
   {
     /* USER CODE END WHILE */
@@ -375,7 +404,7 @@ static void MX_SPI3_Init(void)
   SPI_InitStruct.ClockPolarity = LL_SPI_POLARITY_HIGH;
   SPI_InitStruct.ClockPhase = LL_SPI_PHASE_1EDGE;
   SPI_InitStruct.NSS = LL_SPI_NSS_SOFT;
-  SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV4;
+  SPI_InitStruct.BaudRate = LL_SPI_BAUDRATEPRESCALER_DIV2;
   SPI_InitStruct.BitOrder = LL_SPI_MSB_FIRST;
   SPI_InitStruct.CRCCalculation = LL_SPI_CRCCALCULATION_DISABLE;
   SPI_InitStruct.CRCPoly = 10;
